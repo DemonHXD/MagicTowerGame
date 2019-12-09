@@ -45,7 +45,7 @@ void HeroMoveAndUpdate(int OffSetX, int OffSetY, int move);
 bool Fight(int Kind);
 
 //打印战斗信息
-void PrintFight();
+void PrintFight(Monster monster);
 
 //打印英雄属性
 void PrintHero();

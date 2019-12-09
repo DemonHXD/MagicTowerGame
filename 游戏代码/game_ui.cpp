@@ -63,9 +63,7 @@ void Choice() {
 	switch (n)
 	{
 	case 1:
-		GameRun();          //游戏开始
-		//NewGame();
-		//ReadMemory();
+		NewGame();          //新的游戏开始
 		break;
 	case 2:
 		ReadMemory();      	//读取回忆

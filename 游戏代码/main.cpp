@@ -10,7 +10,7 @@ int main()
 {
 	g_pHero = (Hero*)malloc(sizeof(Hero));
 
-	GameInit();
+	
 	Choice();
 
 	return 0;

@@ -41,9 +41,12 @@ void NewGame() {
 		{1, 8,11,10, 1, 0, 2, 0, 1, 0, 0, 0, 1},
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 	};
-	FILE * pFile = fopen("1.map", "wb");
+	FILE * pFile = fopen("res/map/1.map", "wb");
 	fwrite(map, sizeof(map), 1, pFile);
 	fclose(pFile);
+
+	GameInit();
+	GameRun();
 }
 
 /*
@@ -216,9 +219,9 @@ void PrintFight(Monster monster) {
 	游戏存档
 */
 void SaveGame() {
-	
+
 	Hero hero = { 
-		*g_pHero->name,
+		"Jack",
 		g_pHero->lv,
 		g_pHero->hp,
 		g_pHero->Att,
@@ -359,43 +362,38 @@ bool Fight(int Kind)
 	fread(&monster, sizeof(Monster), 1, pFile);
 	fclose(pFile);
 	//自动战斗
-	//int count = 2;
 	while (true)
 	{
+		if (g_pHero->hp > 0 && monster.hp > 0) {
+
+		
 		//判断英雄血量>0
 		if (g_pHero->hp > 0)
 		{
 			if (g_pHero->Att > monster.Def)//判断英雄的攻击>怪物的防御力
 			{
-				//cout << monster.name << "失去了血量:" << g_pHero->Att - monster.Def << endl;
 				monster.hp -= g_pHero->Att - monster.Def;
 
 			}
 			else
 			{
 				monster.hp -= 1;
-				//cout << monster.name << "失去了血量:" << 1 << endl;
 			}
-			//Gotoxy(53, count++);
 		}
 		else
 			return false;//失败
-		Sleep(1000);
 		if (monster.hp > 0)
 		{
 
 			if (monster.Att > g_pHero->Def)//判断英雄的攻击>怪物的防御力
 			{
-				//cout << g_pHero->name << "失去了血量:" << monster.Att - g_pHero->Def << endl;
 				g_pHero->hp -= monster.Att - g_pHero->Def;
 
 			}
 			else
 			{
 				g_pHero->hp -= 1;
-				//cout << g_pHero->name << "失去了血量:" << 1 << endl;
 			}
-			//Gotoxy(53, count++);
 		}
 		else
 		{
@@ -411,9 +409,19 @@ bool Fight(int Kind)
 			return true;//胜利
 		}
 		PrintFight(monster);
+		_sleep(1000);
+		}
+		else {
+			break;
+		}
+		
+		
+		//Sleep(1000);
 	}
 	
 }
+
+
 
 /*
 	升级
@@ -436,17 +444,20 @@ void LvUp(int Exp)
 */
 void GameRun()
 {
+	GameInit();
 	system("CLS");
 	while (1)
 	{
+		//打印英雄属性
 		PrintHero();
+		//打印地图
 		PrintMap();
+		//帮助菜单
 		helpMenu();
 		int Kind = HeroMove();
 		if (3 == Kind || 4 == Kind)
 		{
 			Fight(Kind);
-			//system("CLS");
 		}
 	}
 }
@@ -455,14 +466,14 @@ void GameRun()
 	结束游戏
 */
 void Close() {
-
+	system("exit");
 }
 
 /*
 	读取回忆
 */
 void ReadMemory() {
-
+	GameRun();
 }
 
 /*
