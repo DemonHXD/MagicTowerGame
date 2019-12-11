@@ -4,7 +4,7 @@
 using namespace std;
 
 //定义一个二维数组存储地图数据
-int Map[13][13];
+int Map[10][13][13];
 Hero *g_pHero;
 int main()
 {

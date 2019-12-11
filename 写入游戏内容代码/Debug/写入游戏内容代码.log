@@ -1,4 +1,0 @@
-﻿  main.cpp
-f:\网游g46班\上课内容\课堂作业\魔塔游戏---c语言版本\魔塔游戏---c语言版本\写入游戏内容代码\main.cpp(33): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  d:\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: 参见“fopen”的声明
-  写入游戏内容代码.vcxproj -> F:\网游G46班\上课内容\课堂作业\魔塔游戏---C语言版本\魔塔游戏---C语言版本\Debug\写入游戏内容代码.exe

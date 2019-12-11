@@ -15,7 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Hero.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Hero.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

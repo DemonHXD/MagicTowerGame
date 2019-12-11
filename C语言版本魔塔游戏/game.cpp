@@ -14,68 +14,6 @@ using namespace std;
 	5.地图数量至少3张。
 */
 
-//声明全局变量
-extern int Map[13][13];
-extern Hero *g_pHero;
-
-void NewGame() {
-	//写入初始角色属性
-	Hero hero = { "Jack",1,100,10,5,0,0,0,0,0,10,3 };
-	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
-	fwrite(&hero, sizeof(Hero), 1, pFileHero);
-	fclose(pFileHero);
-
-	//写入初始地图
-	int map[13][13] = {
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1,12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-		{1, 8, 0, 0, 5, 0, 1, 7,10, 0, 1, 0, 1},
-		{1, 0, 4, 0, 1, 0, 1, 6, 8, 0, 1, 0, 1},
-		{1, 1, 5, 1, 1, 0, 1, 1, 1, 5, 1, 0, 1},
-		{1,10, 0, 0, 1, 0, 5, 3, 4, 3, 1, 0, 1},
-		{1, 0, 4, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1},
-		{1, 1, 5, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 5, 1, 1},
-		{1, 8, 0,10, 1, 0, 0, 0, 1, 0, 0, 0, 1},
-		{1, 8,11,10, 1, 0, 2, 0, 1, 0, 0, 0, 1},
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-	};
-	FILE * pFile = fopen("res/map/1.map", "wb");
-	fwrite(map, sizeof(map), 1, pFile);
-	fclose(pFile);
-
-	GameInit();
-	GameRun();
-}
-
-/*
-	游戏初始化
-*/
-void GameInit()
-{
-	//读取地图数据
-	FILE * pFile = fopen("res/map/1.map", "rb");
-	fread(Map, sizeof(Map), 1, pFile);
-	fclose(pFile);
-	//读取英雄数据
-	pFile = fopen("res/hero/hero.txt", "rb");
-	fread(g_pHero, sizeof(Hero), 1, pFile);
-	fclose(pFile);
-	//遍历地图读取英雄的坐标
-	for (int i = 0; i < 13; i++)
-	{
-		for (int j = 0; j < 13; j++)
-		{
-			if (2 == Map[i][j])
-			{
-				g_pHero->posx = i;
-				g_pHero->posy = j;
-			}
-		}
-	}
-}
-
 /*
 	打印地图
 
@@ -96,6 +34,112 @@ void GameInit()
 	11表示宝物
 	12表示上楼梯
 	13表示下楼梯
+
+	14表示npc
+*/
+
+//声明全局变量
+extern int Map[10][13][13];
+extern Hero *g_pHero;
+int layer;
+
+/*
+	开始游戏
+*/
+void NewGame() {
+	//初始角色属性
+	Hero hero = { "Jack",1,100,10,5,0,0,0,0,0,10,3 };
+	//写入英雄属性到文件
+	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
+	fwrite(&hero, sizeof(Hero), 1, pFileHero);
+	fclose(pFileHero);
+
+	//写入初始地图
+	int map[10][13][13] = { 
+		{
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1,12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+			{1, 8, 0, 0, 5, 0, 1, 7,10, 0, 1, 0, 1},
+			{1, 0, 4, 0, 1, 0, 1, 6, 8, 0, 1, 0, 1},
+			{1, 1, 5, 1, 1, 0, 1, 1, 1, 5, 1, 0, 1},
+			{1,10, 0, 0, 1, 0, 5, 3, 4, 3, 1, 0, 1},
+			{1, 0, 4, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1},
+			{1, 1, 5, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 5, 1, 1},
+			{1, 8, 0,10, 1, 0, 0, 0, 1, 0, 0, 0, 1},
+			{1, 8,11,10, 1, 0, 2, 0, 1, 0, 0, 0, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+		},
+		{
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1,12, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 2, 0, 1, 1, 0, 4, 0, 4, 0, 1, 1, 1},
+			{1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
+			{1, 0, 1,10,10, 1, 0, 0, 0, 1, 0,14, 1},
+			{1, 0, 1,10, 0, 5, 0, 0, 0, 5, 0, 0, 1},
+			{1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1},
+			{1, 0, 1,14, 0, 1, 0, 0, 0, 1, 0,14, 1},
+			{1, 0, 1, 0, 0, 5, 0, 0, 0, 5, 0, 0, 1},
+			{1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1},
+			{1, 0, 1, 9, 9, 1, 0, 0, 0, 1, 0, 0, 1},
+			{1,13, 1, 9, 0, 5, 0, 0, 0, 5, 0, 0, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+		},
+	};
+	//写入地图到文件
+	FILE * pFile = fopen("res/map/1.map", "wb");
+	fwrite(map, sizeof(map), 1, pFile);
+	fclose(pFile);
+
+	//写入游戏相关配置到文件
+	layer = 0;
+	FILE * pFileLayer = fopen("res/game/config.txt", "wb");
+	//fprintf(pFileLayer, "%d", layer);
+	fwrite(&layer, sizeof(int), 1, pFileLayer);
+	fclose(pFileLayer);
+
+	GameInit();
+	GameRun();
+}
+
+/*
+	游戏初始化
+*/
+void GameInit()
+{
+	//读取配置文件信息
+	FILE * pFileLayer = fopen("res/game/config.txt", "rb");
+	fread(&layer, 4, 1, pFileLayer);
+	//fscanf(pFileLayer, "%d", &layer);
+	fclose(pFileLayer);
+
+	//读取地图数据
+	FILE * pFile = fopen("res/map/1.map", "rb");
+	fread(Map, sizeof(Map), 1, pFile);
+	fclose(pFile);
+
+	//读取英雄数据
+	pFile = fopen("res/hero/hero.txt", "rb");
+	fread(g_pHero, sizeof(Hero), 1, pFile);
+	fclose(pFile);
+	//遍历地图读取英雄的坐标
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			if (2 == Map[layer][i][j])
+			{
+				g_pHero->posx = i;
+				g_pHero->posy = j;
+			}
+		}
+	}
+}
+
+
+/*
+	打印地图
 */
 void PrintMap()
 {
@@ -105,7 +149,7 @@ void PrintMap()
 		Gotoxy(26, i+2);
 		for (int j = 0; j < 13; j++)
 		{
-			switch (Map[i][j])
+			switch (Map[layer][i][j])
 			{
 			case 0:
 				cout << "  ";
@@ -142,16 +186,19 @@ void PrintMap()
 				cout << "宝";
 				break;
 			case 12:
-				cout << "梯";
+				cout << "上";
 				break;
 			case 13:
-				cout << "梯";
+				cout << "下";
+				break;			
+			case 14:
+				cout << "人";
 				break;
 			}
 		}
 		cout << endl;
 	}
-
+	cout << layer;
 }
 
 /*
@@ -243,11 +290,11 @@ void SaveGame() {
 	fwrite(Map, sizeof(Map), 1, pFile);
 	fclose(pFile);
 
-	Sleep(800);
-	Gotoxy(26, 18);
-	cout << "游戏进度保存成功!" << endl;
-	Sleep(1500);
-	system("CLS");
+	//写入游戏相关配置到文件
+	FILE * pFileLayer = fopen("res/game/config.txt", "wb");
+	//fprintf(pFileLayer, "%d", layer);
+	fwrite(&layer, 4, 1, pFileLayer);
+	fclose(pFileLayer);
 }
 
 /*
@@ -285,49 +332,68 @@ int  HeroMove()
 		break;
 	case '2':
 		SaveGame();
+		Sleep(800);
+		Gotoxy(26, 18);
+		cout << "游戏进度保存成功!" << endl;
+		Sleep(1500);
+		system("CLS");
 		break;
 	}
-	if (0 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
+	if (0 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
 	{
 		//修改地图数据
-		Map[g_pHero->posx][g_pHero->posy] -= 2;//人离开
+		Map[layer][g_pHero->posx][g_pHero->posy] -= 2;//人离开
 
-		Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] += 2;
+		Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] += 2;
 		//修改人物坐标
 		g_pHero->posx += g_pHero->OffSetX;
 		g_pHero->posy += g_pHero->OffSetY;
 
 	}
-	else if (3 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] || 4 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
+	else if (3 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] || 4 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
 	{
-		return Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY];
+		return Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY];
 	}
-	else if (5 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
+	else if (5 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY])
 	{//碰到是门的情况
 		if (g_pHero->Key > 0) {
 			g_pHero->Key -= 1;
 			HeroMoveAndUpdate(g_pHero->OffSetX, g_pHero->OffSetY, 5);
 		}
 	}
-	else if (8 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+	else if (8 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
 		//碰到加血的情况
 		g_pHero->hp += 400;
 		HeroMoveAndUpdate(g_pHero->OffSetX, g_pHero->OffSetY, 8);
 	}
-	else if (6 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+	else if (6 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
 		//碰到加防御的情况
 		g_pHero->Def += 4;
 		HeroMoveAndUpdate(g_pHero->OffSetX, g_pHero->OffSetY, 6);
 	}
-	else if (7 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+	else if (7 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
 		//碰到加攻击的情况
 		g_pHero->Att += 4;
 		HeroMoveAndUpdate(g_pHero->OffSetX, g_pHero->OffSetY, 7);
 	}
-	else if (10 == Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+	else if (10 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
 		//碰到钥匙的情况
 		g_pHero->Key += 1;
 		HeroMoveAndUpdate(g_pHero->OffSetX, g_pHero->OffSetY, 10);
+	}
+	else if (12 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+		//碰到上楼梯的情况
+		layer++;
+		SaveGame();
+		//重新初始化一下主角的位置
+		GameInit();
+	}	
+	else if (13 == Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY]) {
+		//碰到下楼梯的情况
+		layer--;
+		SaveGame();
+		//重新初始化一下主角的位置
+		GameInit();
 	}
 	return 0;
 }
@@ -336,8 +402,8 @@ int  HeroMove()
 	英雄移动并更新位置
 */
 void HeroMoveAndUpdate(int OffSetX, int OffSetY, int move) {
-	Map[g_pHero->posx][g_pHero->posy] -= 2;//人离开
-	Map[g_pHero->posx + OffSetX][g_pHero->posy + OffSetY] += 2 - move;
+	Map[layer][g_pHero->posx][g_pHero->posy] -= 2;//人离开
+	Map[layer][g_pHero->posx + OffSetX][g_pHero->posy + OffSetY] += 2 - move;
 	//修改人物坐标
 	g_pHero->posx += OffSetX;
 	g_pHero->posy += OffSetY;
@@ -398,9 +464,9 @@ bool Fight(int Kind)
 		else
 		{
 			//修改地图数据
-			Map[g_pHero->posx][g_pHero->posy] = 0;//英雄原来的位置设置为0
+			Map[layer][g_pHero->posx][g_pHero->posy] = 0;//英雄原来的位置设置为0
 			//怪物所在的位置设置2.
-			Map[g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] = 2;
+			Map[layer][g_pHero->posx + g_pHero->OffSetX][g_pHero->posy + g_pHero->OffSetY] = 2;
 			g_pHero->posx += g_pHero->OffSetX;
 			g_pHero->posy += g_pHero->OffSetY;
 			//调用升级函数:
@@ -420,8 +486,6 @@ bool Fight(int Kind)
 	}
 	
 }
-
-
 
 /*
 	升级

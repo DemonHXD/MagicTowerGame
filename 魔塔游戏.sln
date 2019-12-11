@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "游戏代码", "游戏代码\游戏代码.vcxproj", "{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C++版本魔塔游戏", "C++版本魔塔游戏\C++版本魔塔游戏.vcxproj", "{7894168A-8BF2-471F-9AAB-03C88A4AAC22}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "写入游戏内容代码", "写入游戏内容代码\写入游戏内容代码.vcxproj", "{A55B14FD-0BD0-42D1-8804-5AAD6083A787}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "游戏代码", "C语言版本魔塔游戏\游戏代码.vcxproj", "{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Debug|x64.ActiveCfg = Debug|x64
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Debug|x64.Build.0 = Debug|x64
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Debug|x86.ActiveCfg = Debug|Win32
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Debug|x86.Build.0 = Debug|Win32
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Release|x64.ActiveCfg = Release|x64
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Release|x64.Build.0 = Release|x64
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Release|x86.ActiveCfg = Release|Win32
+		{7894168A-8BF2-471F-9AAB-03C88A4AAC22}.Release|x86.Build.0 = Release|Win32
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Debug|x64.ActiveCfg = Debug|x64
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Debug|x64.Build.0 = Debug|x64
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Debug|x86.ActiveCfg = Debug|Win32
@@ -23,14 +31,6 @@ Global
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Release|x64.Build.0 = Release|x64
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Release|x86.ActiveCfg = Release|Win32
 		{8E2DE36A-BE4D-4E2F-9814-06F822BB5B4C}.Release|x86.Build.0 = Release|Win32
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Debug|x64.ActiveCfg = Debug|x64
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Debug|x64.Build.0 = Debug|x64
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Debug|x86.ActiveCfg = Debug|Win32
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Debug|x86.Build.0 = Debug|Win32
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Release|x64.ActiveCfg = Release|x64
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Release|x64.Build.0 = Release|x64
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Release|x86.ActiveCfg = Release|Win32
-		{A55B14FD-0BD0-42D1-8804-5AAD6083A787}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
