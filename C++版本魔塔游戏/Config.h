@@ -10,14 +10,14 @@ class Config
 {
 public:
 	Config();
-	Config(int layer);
+	Config(int layer, string save[]);
 	~Config();
-	void ReadConfig();				//从配置文件读取
-	void WriteConfig();				//写入到配置文件
-	
-	int m_layer;					//当前层数
-	string m_save[3] = {"存档一", "存档二", "存档三"};	//存档位置为字符串数组，存档后内容为存档时间
-	//int 
+	void ReadConfig(Config *&config);					//从配置文件读取
+	void WriteConfig(Config *&config);					//写入到配置文件
+	void InitConfig();									//初始化配置
+
+	int m_layer;										//当前层数
+	string m_save[3];									//存档位置为字符串数组，存档后内容为存档时间
 };
 #endif
 

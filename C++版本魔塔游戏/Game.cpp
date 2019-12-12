@@ -18,7 +18,7 @@ void Game::NewGame() {
 	map->InitMap();
 
 	//写入游戏相关配置到文件
-	config->WriteConfig();
+	config->InitConfig();
 
 	//游戏初始化
 	GameInit();
@@ -33,7 +33,7 @@ void Game::NewGame() {
 void Game::GameInit()
 {
 	//读取配置文件信息
-	config->ReadConfig();
+	config->ReadConfig(config);
 
 	//读取地图数据
 	map->ReadMap();
@@ -75,49 +75,32 @@ void Game::PrintFight(Monster monster) {
 }
 
 /*
-	
+	打印系统消息
 */
 void Game::PrintSystemInfo() {
 	util->Color(14);
 	util->Gotoxy(60, 9);
-	cout << "系统消息";	
+	cout << "系统消息";
 	util->Gotoxy(53, 10);
 	cout << msg;
-	
+
 }
 
 /*
 	游戏存档
 */
 void Game::Save() {
-	//保存英雄属性
-	//hero->SaveHero(hero);
-	////保存地图
-	//map->SaveMap();
-	////写入游戏相关配置到文件
-	//config->WriteConfig();
 	//Sleep(800);
 	//util->Gotoxy(26, 18);
 	//cout << "游戏进度保存成功!" << endl;
 	//Sleep(1500);
 	//system("CLS");
-	util->Gotoxy(53, 10);
-	cout << "***********************";
-	util->Gotoxy(53, 11);
-	cout << "*        *空档1       *";
-	util->Gotoxy(53, 12);
-	cout << "*         空档2       *";
-	util->Gotoxy(53, 13);
-	cout << "*         空档3       *";
-	util->Gotoxy(53, 14);
-	cout << "***********************";
+	ShowSaveGame();
 	util->Gotoxy(26, 18);
-	cout << "请输入存档位置[1,2,3]: " << endl;
+	cout << "请输入存档位置[1,2,3]: ";
 	int Input = getch();
 	fflush(stdin);//刷新输入缓存区
-	SaveGameSelect(Input);
-	Sleep(1500);
-	system("CLS");
+	SaveGameSelect(Input - '0');
 }
 
 /*
@@ -239,7 +222,7 @@ void Game::IntoNextLayer()
 		cout << "暂时不能加载更多地图";
 		Sleep(1500);
 		system("CLS");
-		
+
 	}
 }
 
@@ -424,44 +407,32 @@ void Game::helpMenu() {
 	选择存档
 */
 void Game::SaveGameSelect(int select) {
-	switch (select)
-	{
-	case 1:
-		util->Gotoxy(53, 10);
-		cout << "***********************";
-		util->Gotoxy(53, 11);
-		cout << "*        *空档1       *";
-		util->Gotoxy(53, 12);
-		cout << "*         空档2       *";
-		util->Gotoxy(53, 13);
-		cout << "*         空档3       *";
-		util->Gotoxy(53, 14);
-		cout << "***********************";
-		break;
-	case 2:
-		util->Gotoxy(53, 10);
-		cout << "***********************";
-		util->Gotoxy(53, 11);
-		cout << "*         空档1       *";
-		util->Gotoxy(53, 12);
-		cout << "*        *空档2       *";
-		util->Gotoxy(53, 13);
-		cout << "*         空档3       *";
-		util->Gotoxy(53, 14);
-		cout << "***********************";
-		break;	
-	case 3:
-		util->Gotoxy(53, 10);
-		cout << "***********************";
-		util->Gotoxy(53, 11);
-		cout << "*         空档1       *";
-		util->Gotoxy(53, 12);
-		cout << "*         空档2       *";
-		util->Gotoxy(53, 13);
-		cout << "*        *空档3       *";
-		util->Gotoxy(53, 14);
-		cout << "***********************";
-		break;
-	}
-	
+	//保存英雄属性
+	hero->SaveHero(hero);
+	//保存地图
+	map->SaveMap();
+	config->m_save[select - 1] = util->GetCurrentionTime();
+	//写入游戏相关配置到文件
+	config->WriteConfig(config);
+	util->Gotoxy(26, 20);
+	cout << "存档成功!!!";
+	Sleep(1500);
+	system("CLS");
+}
+
+/*
+	查看存档
+*/
+void Game::ShowSaveGame() {
+	util->Gotoxy(53, 10);
+	cout << "*************************";
+	util->Gotoxy(53, 11);
+	cout << config->m_save[0];
+	util->Gotoxy(53, 12);
+	cout << config->m_save[1];
+	util->Gotoxy(53, 13);
+	cout << config->m_save[2];
+	util->Gotoxy(53, 14);
+	cout << "*************************";
+
 }

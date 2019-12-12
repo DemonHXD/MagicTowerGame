@@ -36,7 +36,7 @@ private:
 	Hero *hero = new Hero();						//英雄
 	Map  *map  = new Map();							//地图
 	Utils *util = Utils::getInstance();				//实体类实例	
-	Config *config = new Config(0);					//配置信息	初始化层数为0
+	Config *config = new Config();					//配置信息
 	string msg = "";
 };		
 #endif

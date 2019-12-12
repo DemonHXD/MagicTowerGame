@@ -75,4 +75,36 @@ void Utils::Rabbit() {
 	printf("┻");
 }
 
+/*
+	获取当前时间
+*/
+string Utils::GetCurrentionTime() {
+	// 基于当前系统的当前日期/时间
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	string time = "";
+	string month = to2String(to_string(1 + ltm->tm_mon));
+	string day = to2String(to_string(1 + ltm->tm_mday));
+	//string hour = to2String(to_string(ltm->tm_hour));
+	//string min = to2String(to_string(ltm->tm_min));
+	//string sec = to2String(to_string(ltm->tm_sec));
+
+	time = "*存档日期:"
+		+ to_string(1900 + ltm->tm_year) + "年"
+		+ month + "月"
+		+ day + "日*";
+	//+ hour + ":"
+	//+ min + ":"
+	//+ sec;
+	return time;
+}
+
+string Utils::to2String(string str) {
+	if (str.size() < 2)
+	{
+		str = "0" + str;
+	}
+	return str;
+}
+
 
