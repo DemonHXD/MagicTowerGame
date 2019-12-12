@@ -25,6 +25,54 @@ Hero::~Hero()
 {
 }
 
+
+/*
+	保存英雄属性
+*/
+void Hero::SaveHero(Hero *&hero) {
+	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
+	fwrite(hero, sizeof(Hero), 1, pFileHero);
+	fclose(pFileHero);
+}
+
+/*
+	读取英雄属性
+*/
+void Hero::ReadHero(Hero *&hero) {
+	FILE * pFile = fopen("res/hero/hero.txt", "rb");
+	fread(hero, sizeof(Hero), 1, pFile);
+	fclose(pFile);
+}
+
+/*
+	初始化英雄
+*/
+void Hero::InitHero() {
+	//初始角色属性
+	Hero *hero = new Hero("Jack", 1, 100, 10, 5, 0, 0, 0, 0, 0, 10, 3);
+	//写入英雄属性到文件
+	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
+	fwrite(hero, sizeof(Hero), 1, pFileHero);
+	fclose(pFileHero);
+}
+
+/*
+	获取英雄当前的位置
+*/
+void Hero::GetHeroPosition(Map *&map, int layer) {
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			if (2 == map->map[layer][i][j])
+			{
+				m_posx = i;
+				m_posy = j;
+			}
+		}
+	}
+}
+
 /*
 	打印英雄属性
 */

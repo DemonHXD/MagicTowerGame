@@ -12,23 +12,18 @@ Game::~Game()
 */
 void Game::NewGame() {
 	//初始角色属性
-	Hero *hero = new Hero( "Jack",1,100,10,5,0,0,0,0,0,10,3 );
-	//写入英雄属性到文件
-	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
-	fwrite(hero, sizeof(Hero), 1, pFileHero);
-	fclose(pFileHero);
+	hero->InitHero();
 
 	//写入初始地图
 	map->InitMap();
 
 	//写入游戏相关配置到文件
-	layer = 0;
-	FILE * pFileLayer = fopen("res/game/config.txt", "wb");
-	//fprintf(pFileLayer, "%d", layer);
-	fwrite(&layer, sizeof(int), 1, pFileLayer);
-	fclose(pFileLayer);
+	config->WriteConfig();
 
+	//游戏初始化
 	GameInit();
+
+	//运行游戏
 	Run();
 }
 
@@ -38,57 +33,57 @@ void Game::NewGame() {
 void Game::GameInit()
 {
 	//读取配置文件信息
-	FILE * pFileLayer = fopen("res/game/config.txt", "rb");
-	fread(&layer, 4, 1, pFileLayer);
-	fclose(pFileLayer);
+	config->ReadConfig();
 
 	//读取地图数据
 	map->ReadMap();
 
 	//读取英雄数据
-	FILE * pFile = fopen("res/hero/hero.txt", "rb");
-	fread(hero, sizeof(Hero), 1, pFile);
-	fclose(pFile);
+	hero->ReadHero(hero);
+
 	//遍历地图读取英雄的坐标
-	for (int i = 0; i < 13; i++)
-	{
-		for (int j = 0; j < 13; j++)
-		{
-			if (2 == map->map[layer][i][j])
-			{
-				hero->m_posx = i;
-				hero->m_posy = j;
-			}
-		}
-	}
+	hero->GetHeroPosition(map, config->m_layer);
 }
-
-
 
 /*
 	打印战斗信息
 */
 void Game::PrintFight(Monster monster) {
-	util->Color(13);
-	//打印英雄的战斗数据
-	util->Gotoxy(53, 6);
-	cout << hero->m_name;
-	util->Gotoxy(59, 6);
-	cout << hero->m_hp;
-	util->Gotoxy(65, 6);
-	cout << hero->m_att;
-	util->Gotoxy(71, 6);
-	cout << hero->m_def;
+	if (monster.m_hp > 0)
+	{
+		util->Color(12);
+		//打印英雄的战斗数据
+		util->Gotoxy(53, 6);
+		cout << hero->m_name;
+		util->Gotoxy(59, 6);
+		cout << hero->m_hp;
+		util->Gotoxy(65, 6);
+		cout << hero->m_att;
+		util->Gotoxy(71, 6);
+		cout << hero->m_def;
 
-	//打印怪物的战斗属性
-	util->Gotoxy(53, 8);
-	cout << monster.m_name;
-	util->Gotoxy(59, 8);
-	cout << monster.m_hp;
-	util->Gotoxy(65, 8);
-	cout << monster.m_att;
-	util->Gotoxy(71, 8);
-	cout << monster.m_def;
+		//打印怪物的战斗属性
+		util->Gotoxy(53, 7);
+		cout << monster.m_name;
+		util->Gotoxy(59, 7);
+		cout << monster.m_hp;
+		util->Gotoxy(65, 7);
+		cout << monster.m_att;
+		util->Gotoxy(71, 7);
+		cout << monster.m_def;
+	}
+}
+
+/*
+	
+*/
+void Game::PrintSystemInfo() {
+	util->Color(14);
+	util->Gotoxy(60, 9);
+	cout << "系统消息";	
+	util->Gotoxy(53, 10);
+	cout << msg;
+	
 }
 
 /*
@@ -96,19 +91,33 @@ void Game::PrintFight(Monster monster) {
 */
 void Game::Save() {
 	//保存英雄属性
-	FILE * pFileHero = fopen("res/hero/hero.txt", "wb");
-	fwrite(hero, sizeof(Hero), 1, pFileHero);
-	fclose(pFileHero);
-
-	//保存地图
-	map->SaveMap();
-
-
-	//写入游戏相关配置到文件
-	FILE * pFileLayer = fopen("res/game/config.txt", "wb");
-	//fprintf(pFileLayer, "%d", layer);
-	fwrite(&layer, 4, 1, pFileLayer);
-	fclose(pFileLayer);
+	//hero->SaveHero(hero);
+	////保存地图
+	//map->SaveMap();
+	////写入游戏相关配置到文件
+	//config->WriteConfig();
+	//Sleep(800);
+	//util->Gotoxy(26, 18);
+	//cout << "游戏进度保存成功!" << endl;
+	//Sleep(1500);
+	//system("CLS");
+	util->Gotoxy(53, 10);
+	cout << "***********************";
+	util->Gotoxy(53, 11);
+	cout << "*        *空档1       *";
+	util->Gotoxy(53, 12);
+	cout << "*         空档2       *";
+	util->Gotoxy(53, 13);
+	cout << "*         空档3       *";
+	util->Gotoxy(53, 14);
+	cout << "***********************";
+	util->Gotoxy(26, 18);
+	cout << "请输入存档位置[1,2,3]: " << endl;
+	int Input = getch();
+	fflush(stdin);//刷新输入缓存区
+	SaveGameSelect(Input);
+	Sleep(1500);
+	system("CLS");
 }
 
 /*
@@ -117,8 +126,6 @@ void Game::Save() {
 int Game::HeroMove()
 {
 	int Input = getch();
-	//system("CLS");
-	//flush(Input);
 	fflush(stdin);//刷新输入缓存区
 	hero->m_offSetX = hero->m_offSetY = 0;
 	switch (Input)
@@ -146,65 +153,59 @@ int Game::HeroMove()
 		break;
 	case '2':
 		Save();
-		Sleep(800);
-		util->Gotoxy(26, 18);
-		cout << "游戏进度保存成功!" << endl;
-		Sleep(1500);
-		system("CLS");
 		break;
 	}
-	if (0 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
+	if (0 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
 	{
 		//修改地图数据
-		map->map[layer][hero->m_posx][hero->m_posy] -= 2;//人离开
+		map->map[config->m_layer][hero->m_posx][hero->m_posy] -= 2;//人离开
 
-		map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] += 2;
+		map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] += 2;
 		//修改人物坐标
 		hero->m_posx += hero->m_offSetX;
 		hero->m_posy += hero->m_offSetY;
 
 	}
-	else if (3 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] || 4 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
+	else if (3 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] || 4 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
 	{
-		return map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY];
+		return map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY];
 	}
-	else if (5 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
+	else if (5 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY])
 	{//碰到是门的情况
 		if (hero->m_key > 0) {
 			hero->m_key -= 1;
 			HeroMoveAndUpdate(hero->m_offSetX, hero->m_offSetY, 5);
 		}
 	}
-	else if (8 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (8 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到加血的情况
 		hero->m_hp += 400;
 		HeroMoveAndUpdate(hero->m_offSetX, hero->m_offSetY, 8);
 	}
-	else if (6 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (6 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到加防御的情况
 		hero->m_def += 4;
 		HeroMoveAndUpdate(hero->m_offSetX, hero->m_offSetY, 6);
 	}
-	else if (7 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (7 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到加攻击的情况
 		hero->m_att += 4;
 		HeroMoveAndUpdate(hero->m_offSetX, hero->m_offSetY, 7);
 	}
-	else if (10 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (10 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到钥匙的情况
 		hero->m_key += 1;
 		HeroMoveAndUpdate(hero->m_offSetX, hero->m_offSetY, 10);
 	}
-	else if (12 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (12 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到上楼梯的情况
 		IntoNextLayer();
 	}
-	else if (13 == map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
+	else if (13 == map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY]) {
 		//碰到下楼梯的情况
-		layer--;
-		Save();
+		config->m_layer--;
 		//重新初始化一下主角的位置
-		GameInit();
+		hero->GetHeroPosition(map, config->m_layer);
 	}
 	return 0;
 }
@@ -213,8 +214,8 @@ int Game::HeroMove()
 	英雄移动并更新位置
 */
 void Game::HeroMoveAndUpdate(int OffSetX, int OffSetY, int move) {
-	map->map[layer][hero->m_posx][hero->m_posy] -= 2;//人离开
-	map->map[layer][hero->m_posx + OffSetX][hero->m_posy + OffSetY] += 2 - move;
+	map->map[config->m_layer][hero->m_posx][hero->m_posy] -= 2;//人离开
+	map->map[config->m_layer][hero->m_posx + OffSetX][hero->m_posy + OffSetY] += 2 - move;
 	//修改人物坐标
 	hero->m_posx += OffSetX;
 	hero->m_posy += OffSetY;
@@ -225,14 +226,15 @@ void Game::HeroMoveAndUpdate(int OffSetX, int OffSetY, int move) {
 */
 void Game::IntoNextLayer()
 {
-	layer++;
-	if (layer < map->mapCount) {
-		Save();
+	config->m_layer++;
+	if (config->m_layer < map->mapCount) {
+		//Save();
 		//重新初始化一下主角的位置
-		GameInit();
+		hero->GetHeroPosition(map, config->m_layer);
+		//GameInit();
 	}
 	else {
-		layer--;
+		config->m_layer--;
 		util->Gotoxy(26, 18);
 		cout << "暂时不能加载更多地图";
 		Sleep(1500);
@@ -293,9 +295,9 @@ bool Game::Fight(int Kind)
 		else
 		{
 			//修改地图数据
-			map->map[layer][hero->m_posx][hero->m_posy] = 0;//英雄原来的位置设置为0
+			map->map[config->m_layer][hero->m_posx][hero->m_posy] = 0;//英雄原来的位置设置为0
 			//怪物所在的位置设置2.
-			map->map[layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] = 2;
+			map->map[config->m_layer][hero->m_posx + hero->m_offSetX][hero->m_posy + hero->m_offSetY] = 2;
 			hero->m_posx += hero->m_offSetX;
 			hero->m_posy += hero->m_offSetY;
 			//调用升级函数:
@@ -306,9 +308,7 @@ bool Game::Fight(int Kind)
 		// 打印战斗信息
 		PrintFight(monster);
 		Sleep(1000);
-		
 	}
-
 }
 
 /*
@@ -323,8 +323,9 @@ void  Game::Run()
 		//打印英雄属性
 		hero->PrintHero();
 		//打印地图
-		//PrintMap();
-		map->PrintMap(layer);
+		map->PrintMap(config->m_layer);
+		//打印系统消息
+		PrintSystemInfo();
 		//帮助菜单
 		helpMenu();
 		int Kind = HeroMove();
@@ -417,4 +418,50 @@ void Game::helpMenu() {
 
 	util->Gotoxy(40, 16);
 	cout << "[2]存档";
+}
+
+/*
+	选择存档
+*/
+void Game::SaveGameSelect(int select) {
+	switch (select)
+	{
+	case 1:
+		util->Gotoxy(53, 10);
+		cout << "***********************";
+		util->Gotoxy(53, 11);
+		cout << "*        *空档1       *";
+		util->Gotoxy(53, 12);
+		cout << "*         空档2       *";
+		util->Gotoxy(53, 13);
+		cout << "*         空档3       *";
+		util->Gotoxy(53, 14);
+		cout << "***********************";
+		break;
+	case 2:
+		util->Gotoxy(53, 10);
+		cout << "***********************";
+		util->Gotoxy(53, 11);
+		cout << "*         空档1       *";
+		util->Gotoxy(53, 12);
+		cout << "*        *空档2       *";
+		util->Gotoxy(53, 13);
+		cout << "*         空档3       *";
+		util->Gotoxy(53, 14);
+		cout << "***********************";
+		break;	
+	case 3:
+		util->Gotoxy(53, 10);
+		cout << "***********************";
+		util->Gotoxy(53, 11);
+		cout << "*         空档1       *";
+		util->Gotoxy(53, 12);
+		cout << "*         空档2       *";
+		util->Gotoxy(53, 13);
+		cout << "*        *空档3       *";
+		util->Gotoxy(53, 14);
+		cout << "***********************";
+		break;
+	}
+	
 }

@@ -10,6 +10,9 @@ Map::~Map()
 {
 }
 
+/*
+	初始化地图
+*/
 void Map::InitMap() {
 	//写入初始地图
 	int map[][13][13] = {
@@ -45,7 +48,7 @@ void Map::InitMap() {
 		},
 	};
 	//写入地图到文件
-	FILE * pFile = fopen("res/map/1.map", "wb");
+	FILE * pFile = fopen("res/map/map.txt", "wb");
 	fwrite(map, sizeof(map), 1, pFile);
 	fclose(pFile);
 }
@@ -54,7 +57,7 @@ void Map::InitMap() {
 	把地图写入到文件中
 */
 void Map::SaveMap() {
-	FILE * pFile = fopen("res/map/1.map", "wb");
+	FILE * pFile = fopen("res/map/map.txt", "wb");
 	fwrite(map, sizeof(map), 1, pFile);
 	fclose(pFile);
 }
@@ -63,7 +66,7 @@ void Map::SaveMap() {
 	从文件中读取地图
 */
 void Map::ReadMap() {
-	FILE * pFile = fopen("res/map/1.map", "rb");
+	FILE * pFile = fopen("res/map/map.txt", "rb");
 	fread(map, sizeof(map), 1, pFile);
 	fclose(pFile);
 }

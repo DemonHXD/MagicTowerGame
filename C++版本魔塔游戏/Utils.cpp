@@ -75,20 +75,4 @@ void Utils::Rabbit() {
 	printf("┻");
 }
 
-/*
-	文件读写
-*/
-template<typename dataType, typename String>
-void Utils::fileWrite(String path, String mode, dataType type, int size) {
-	FILE * file = fopen(path, mode);
-	fwrite(&type, size, 1, file);
-	fclose(file);
-}
 
-/*
-	计算数组的大小，返回地图第一维大小
-*/
-template<typename array>
-int GetArrLength(array arr) {
-
-}

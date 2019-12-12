@@ -1,7 +1,8 @@
-#pragma once
-#include "Utils.h"
 #include <iostream>
+#include "Utils.h"
 using namespace std;
+#ifndef   _MAP_H
+#define   _MAP_H
 /*
 	µÿÕº¿‡
 */
@@ -19,4 +20,6 @@ public:
 private:
 	Utils *util = Utils::getInstance();
 };
+
+#endif
 

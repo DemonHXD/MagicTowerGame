@@ -1,4 +1,5 @@
-#pragma once
+#ifndef   _MONSTER_H
+#define   _MONSTER_H
 /*
 	怪兽类
 */
@@ -13,4 +14,5 @@ public:
 	int m_def;			//防御
 	int m_exp;			//提供的经验
 };
+#endif
 
